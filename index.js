@@ -14,6 +14,7 @@ app.use(express.json());
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qkb4jt3.mongodb.net/?retryWrites=true&w=majority`;
+console.log(uri)
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -31,6 +32,20 @@ async function run() {
 
         const toyCollection = client.db('toyDB').collection('toy')
 
+
+        // get the data from mongodb 
+    app.get('/toy', async (req, res) => {
+        const cursor = toyCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+      })
+  
+      app.get('/toy/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) }
+        const result = await toyCollection.findOne(query)
+        res.send(result);
+      })
 
 
         // send data to mongodb 
