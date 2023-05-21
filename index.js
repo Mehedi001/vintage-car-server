@@ -39,14 +39,7 @@ async function run() {
         const result = await cursor.toArray();
         res.send(result);
       })
-    app.get('/toy/:category', async (req, res) => {
-        const category = req.params.category;
-        const query = {category: category}
-        const cursor = await toyCollection.find(query);
-        const result = await cursor.toArray();
-        res.send(result);
-      })
-  
+
       app.get('/toy/:id', async (req, res) => {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) }
@@ -54,6 +47,17 @@ async function run() {
         res.send(result);
       })
 
+    //   category wise finding 
+
+    app.get('/toys/:category', async (req, res) => {
+        const category = req.params.category;
+        const query = {category: category}
+        const cursor = await toyCollection.find(query);
+        const result = await cursor.toArray();
+        res.send(result);
+      })
+  
+ 
 
         // send data to mongodb 
         app.post('/toy', async (req, res) => {
