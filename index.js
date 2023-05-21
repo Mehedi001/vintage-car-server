@@ -39,6 +39,13 @@ async function run() {
         const result = await cursor.toArray();
         res.send(result);
       })
+    app.get('/toy/:category', async (req, res) => {
+        const category = req.params.category;
+        const query = {category: category}
+        const cursor = await toyCollection.find(query);
+        const result = await cursor.toArray();
+        res.send(result);
+      })
   
       app.get('/toy/:id', async (req, res) => {
         const id = req.params.id;
