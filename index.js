@@ -28,36 +28,41 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        client.connect();
 
         const toyCollection = client.db('toyDB').collection('toy')
 
 
         // get the data from mongodb 
-    app.get('/toy', async (req, res) => {
-        const cursor = toyCollection.find();
-        const result = await cursor.toArray();
-        res.send(result);
-      })
+        app.get('/toy', async (req, res) => {
+            const cursor = toyCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        })
 
-      app.get('/toy/:id', async (req, res) => {
-        const id = req.params.id;
-        const query = { _id: new ObjectId(id) }
-        const result = await toyCollection.findOne(query)
-        res.send(result);
-      })
+        app.get('/toy/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await toyCollection.findOne(query)
+            res.send(result);
+        })
 
-    //   category wise finding 
+        //   category wise finding 
 
-    app.get('/toys/:category', async (req, res) => {
-        const category = req.params.category;
-        const query = {category: category}
-        const cursor = await toyCollection.find(query);
-        const result = await cursor.toArray();
-        res.send(result);
-      })
-  
- 
+        app.get('/toys/:category', async (req, res) => {
+            const category = req.params.category;
+            const query = { category: category }
+            const cursor = await toyCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+        app.get('/toymail', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const result = await toyCollection.find(query).toArray();
+            res.send(result)
+        })
 
         // send data to mongodb 
         app.post('/toy', async (req, res) => {
@@ -70,34 +75,31 @@ async function run() {
 
         // update data
 
-    app.put('/toy/:id', async (req, res) => {
-        const id = req.params.id;
-        const filter = { _id: new ObjectId(id) }
-        const options = { upsert: true };
-        const updatedToy = req.body;
-        const toy = {
-          $set: {
-            name: updatedToy.name,
-            quantity: updatedToy.quantity,
-            supplier: updatedToy.supplier,
-            taste: updatedToy.taste,
-            category: updatedToy.category,
-            details: updatedToy.details,
-            photo: updatedToy.photo
-          }
-        }
-        const result = await toyCollection.updateOne(filter, toy, options );
-        res.send(result);
-      })
+        app.put('/toy/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true };
+            const updatedToy = req.body;
+            const toy = {
+                $set: {
+                    price: updatedToy.price,
+                    quantity: updatedToy.quantity,
+                    description: updatedToy.description,
 
-       // delete data from database 
+                }
+            }
+            const result = await toyCollection.updateOne(filter, toy, options);
+            res.send(result);
+        })
 
-    app.delete('/toy/:id', async (req, res) => {
-        const id = req.params.id;
-        const query = { _id: new ObjectId(id) }
-        const result = await toyCollection.deleteOne(query);
-        res.send(result);
-      })
+        // delete data from database 
+
+        app.delete('/toy/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await toyCollection.deleteOne(query);
+            res.send(result);
+        })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
